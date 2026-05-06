@@ -25,11 +25,11 @@ const projects: Project[] = [
     description: 'Aplikasi mobile cross-platform dengan UI yang clean dan performant. Dibangun menggunakan Flutter dengan design system yang konsisten.',
     link: 'https://github.com',
     screenshots: [
-      'public/web-jdih/beranda.png',
-      'public/web-jdih/kategori.png',
-      'public/web-jdih/dokumen.png',
-      'public/web-jdih/hukum.png',
-      'public/web-jdih/detail.png',
+      '/web-jdih/beranda.png',
+      '/web-jdih/kategori.png',
+      '/web-jdih/dokumen.png',
+      '/web-jdih/hukum.png',
+      '/web-jdih/detail.png',
     ],
   },
   {
@@ -43,9 +43,9 @@ const projects: Project[] = [
     description: 'Perancangan identitas brand lengkap mulai dari logo, color palette, typography, hingga brand guidelines untuk startup lokal.',
     link: 'https://github.com',
     screenshots: [
-      'public/web-chatbot/portal.png',
-      'public/web-chatbot/login.png',
-      'public/web-chatbot/chat.png',
+      '/web-chatbot/portal.png',
+      '/web-chatbot/login.png',
+      '/web-chatbot/chat.png',
     ],
   },
   {
@@ -59,10 +59,10 @@ const projects: Project[] = [
     description: 'Dashboard analytics dengan visualisasi data interaktif. Menampilkan berbagai chart, tabel, dan metric bisnis secara real-time.',
     link: 'https://github.com',
     screenshots: [
-      'public/sisfo-desa/figma.png',
-      'public/sisfo-desa/home.png',
-      'public/sisfo-desa/penduduk.png',
-      'public/sisfo-desa/berita.png',
+      '/sisfo-desa/figma.png',
+      '/sisfo-desa/home.png',
+      '/sisfo-desa/penduduk.png',
+      '/sisfo-desa/berita.png',
     ],
   },
   {
@@ -76,10 +76,10 @@ const projects: Project[] = [
     description: 'Aplikasi mobile cross-platform dengan UI yang clean dan performant. Dibangun menggunakan Flutter dengan design system yang konsisten.',
     link: 'https://github.com',
     screenshots: [
-      'public/mobile-jdih/home.jpeg',
-      'public/mobile-jdih/hukum.jpeg',
-      'public/mobile-jdih/detail.jpeg',
-      'public/mobile-jdih/info.jpeg',
+      '/mobile-jdih/home.jpeg',
+      '/mobile-jdih/hukum.jpeg',
+      '/mobile-jdih/detail.jpeg',
+      '/mobile-jdih/info.jpeg',
     ],
   },
   {
@@ -93,9 +93,9 @@ const projects: Project[] = [
     description: 'Real-time chat application dengan fitur rooms, direct messages, dan notifikasi. Menggunakan WebSocket untuk komunikasi live.',
     link: 'https://github.com',
     screenshots: [
-      'public/wellnet/welcome.png',
-      'public/wellnet/home.png',
-      'public/wellnet/admin.jpeg',
+      '/wellnet/welcome.png',
+      '/wellnet/home.png',
+      '/wellnet/admin.jpeg',
     ],
   },
   {
@@ -109,10 +109,10 @@ const projects: Project[] = [
     description: 'Landing page SaaS dengan animasi smooth, conversion-optimized layout, dan performa tinggi. Built with Next.js dan Framer Motion.',
     link: 'https://github.com',
     screenshots: [
-      'public/kallos-moments/home.png',
-      'public/kallos-moments/login.png',
-      'public/kallos-moments/kontak.png',
-      'public/kallos-moments/admin.png',
+      '/kallos-moments/home.png',
+      '/kallos-moments/login.png',
+      '/kallos-moments/kontak.png',
+      '/kallos-moments/admin.png',
     ],
   },
   {
@@ -126,7 +126,7 @@ const projects: Project[] = [
     description: 'Design dan prototyping aplikasi mobile dengan fokus pada UX yang intuitif. Meliputi user research, wireframe, hingga high-fidelity prototype.',
     link: 'https://github.com',
     screenshots: [
-      'public/figma-jdih/figma.png',
+      '/figma-jdih/figma.png',
     ],
   },
   {
@@ -140,12 +140,12 @@ const projects: Project[] = [
     description: 'Dashboard analytics dengan visualisasi data interaktif. Menampilkan berbagai chart, tabel, dan metric bisnis secara real-time.',
     link: 'https://github.com',
     screenshots: [
-      'public/genze/portal.png',
-      'public/genze/login.png',
-      'public/genze/pembayaran.png',
-      'public/genze/invoice.png',
-      'public/genze/dashboard.png',
-      'public/genze/kelas.png',
+      '/genze/portal.png',
+      '/genze/login.png',
+      '/genze/pembayaran.png',
+      '/genze/invoice.png',
+      '/genze/dashboard.png',
+      '/genze/kelas.png',
     ],
   },
   {
@@ -159,11 +159,11 @@ const projects: Project[] = [
     description: 'Landing page SaaS dengan animasi smooth, conversion-optimized layout, dan performa tinggi. Built with Next.js dan Framer Motion.',
     link: 'https://github.com',
     screenshots: [
-      'public/figma-gojek/home.png',
-      'public/figma-gojek/menu.png',
-      'public/figma-gojek/promo.png',
-      'public/figma-gojek/history.png',
-      'public/figma-gojek/profile.png',
+      '/figma-gojek/home.png',
+      '/figma-gojek/menu.png',
+      '/figma-gojek/promo.png',
+      '/figma-gojek/history.png',
+      '/figma-gojek/profile.png',
     ],
   },
 ]

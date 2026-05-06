@@ -43,7 +43,7 @@ const cards: Card[] = [
     location: '📍 Jakarta Selatan, Indonesia',
     email: 'khairalsatriahaspi@gmail.com',
     nohp: '📞 +62 812-7564-5952',
-    image: 'public/pp.png',
+    image: '/pp.png',
     bio: 'Hello, I am Khairal Satria Haspi, Fresh Graduate of the Diploma Program in Information Management (Information Systems) at the State Polytechnic of Padang, in 2025. Possesses a keen interest in enhancing skills in the field of Information Technology, including Programming, Frontend Development, Backend Development, Fullstack Development, Software Testing, Data Analysis, Mobile Development, Web Development, UI/UX Design, Software Engineering, and more.',
     softSkills: [
       'System Analysis', 
