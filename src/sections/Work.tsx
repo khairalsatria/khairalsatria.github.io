@@ -248,7 +248,7 @@ const Work: React.FC = () => {
             borderRadius: '50px', padding: '6px',
           }}>
             {CATEGORIES.map(cat => (
-              <button key={cat} onClick={() => setFilter(cat)} style={{
+              <button key={cat} onClick={() => setFilter(cat || '')} style={{
                 background: filter === cat ? 'var(--lime)' : 'transparent',
                 color: filter === cat ? 'var(--black)' : 'rgba(255,255,255,0.5)',
                 fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 700,
