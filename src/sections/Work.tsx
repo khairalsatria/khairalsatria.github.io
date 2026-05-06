@@ -25,9 +25,11 @@ const projects: Project[] = [
     description: 'Aplikasi mobile cross-platform dengan UI yang clean dan performant. Dibangun menggunakan Flutter dengan design system yang konsisten.',
     link: 'https://github.com',
     screenshots: [
-      'https://placehold.co/800x500/1a3bff/white?text=Screenshot+1',
-      'https://placehold.co/800x500/c5f400/black?text=Screenshot+2',
-      'https://placehold.co/800x500/0a0a0a/white?text=Screenshot+3',
+      'public/web-jdih/beranda.png',
+      'public/web-jdih/kategori.png',
+      'public/web-jdih/dokumen.png',
+      'public/web-jdih/hukum.png',
+      'public/web-jdih/detail.png',
     ],
   },
   {
@@ -41,8 +43,9 @@ const projects: Project[] = [
     description: 'Perancangan identitas brand lengkap mulai dari logo, color palette, typography, hingga brand guidelines untuk startup lokal.',
     link: 'https://github.com',
     screenshots: [
-      'https://placehold.co/800x500/1a3bff/white?text=Brand+1',
-      'https://placehold.co/800x500/c5f400/black?text=Brand+2',
+      'public/web-chatbot/portal.png',
+      'public/web-chatbot/login.png',
+      'public/web-chatbot/chat.png',
     ],
   },
   {
@@ -52,13 +55,14 @@ const projects: Project[] = [
     tags: ['Figma', 'Prototype'],
     color: '#fdf4ff',
     accentColor: '#9b4fff',
-    year: '2024',
+    year: '2025',
     description: 'Dashboard analytics dengan visualisasi data interaktif. Menampilkan berbagai chart, tabel, dan metric bisnis secara real-time.',
     link: 'https://github.com',
     screenshots: [
-      'https://placehold.co/800x500/1a3bff/white?text=Dashboard+1',
-      'https://placehold.co/800x500/c5f400/black?text=Dashboard+2',
-      'https://placehold.co/800x500/0a0a0a/white?text=Dashboard+3',
+      'public/sisfo-desa/figma.png',
+      'public/sisfo-desa/home.png',
+      'public/sisfo-desa/penduduk.png',
+      'public/sisfo-desa/berita.png',
     ],
   },
   {
@@ -72,9 +76,10 @@ const projects: Project[] = [
     description: 'Aplikasi mobile cross-platform dengan UI yang clean dan performant. Dibangun menggunakan Flutter dengan design system yang konsisten.',
     link: 'https://github.com',
     screenshots: [
-      'https://placehold.co/800x500/1a3bff/white?text=Screenshot+1',
-      'https://placehold.co/800x500/c5f400/black?text=Screenshot+2',
-      'https://placehold.co/800x500/0a0a0a/white?text=Screenshot+3',
+      'public/mobile-jdih/home.jpeg',
+      'public/mobile-jdih/hukum.jpeg',
+      'public/mobile-jdih/detail.jpeg',
+      'public/mobile-jdih/info.jpeg',
     ],
   },
   {
@@ -88,9 +93,9 @@ const projects: Project[] = [
     description: 'Real-time chat application dengan fitur rooms, direct messages, dan notifikasi. Menggunakan WebSocket untuk komunikasi live.',
     link: 'https://github.com',
     screenshots: [
-      'https://placehold.co/800x500/1a3bff/white?text=Chat+Screenshot+1',
-      'https://placehold.co/800x500/c5f400/black?text=Chat+Screenshot+2',
-      'https://placehold.co/800x500/0a0a0a/white?text=Chat+Screenshot+3',
+      'public/wellnet/welcome.png',
+      'public/wellnet/home.png',
+      'public/wellnet/admin.jpeg',
     ],
   },
   {
@@ -100,13 +105,14 @@ const projects: Project[] = [
     tags: ['Fullstack', 'PHP', 'Laravel'],
     color: '#f4f4ff',
     accentColor: '#6366f1',
-    year: '2025',
+    year: '2024',
     description: 'Landing page SaaS dengan animasi smooth, conversion-optimized layout, dan performa tinggi. Built with Next.js dan Framer Motion.',
     link: 'https://github.com',
     screenshots: [
-      'https://placehold.co/800x500/1a3bff/white?text=Landing+1',
-      'https://placehold.co/800x500/c5f400/black?text=Landing+2',
-      'https://placehold.co/800x500/0a0a0a/white?text=Landing+3',
+      'public/kallos-moments/home.png',
+      'public/kallos-moments/login.png',
+      'public/kallos-moments/kontak.png',
+      'public/kallos-moments/admin.png',
     ],
   },
   {
@@ -120,8 +126,7 @@ const projects: Project[] = [
     description: 'Design dan prototyping aplikasi mobile dengan fokus pada UX yang intuitif. Meliputi user research, wireframe, hingga high-fidelity prototype.',
     link: 'https://github.com',
     screenshots: [
-      'https://placehold.co/800x500/1a3bff/white?text=UI+Screenshot+1',
-      'https://placehold.co/800x500/c5f400/black?text=UI+Screenshot+2',
+      'public/figma-jdih/figma.png',
     ],
   },
   {
@@ -131,13 +136,16 @@ const projects: Project[] = [
     tags: ['Fullstack', 'PHP', 'Laravel'],
     color: '#fdf4ff',
     accentColor: '#9b4fff',
-    year: '2024',
+    year: '2025',
     description: 'Dashboard analytics dengan visualisasi data interaktif. Menampilkan berbagai chart, tabel, dan metric bisnis secara real-time.',
     link: 'https://github.com',
     screenshots: [
-      'https://placehold.co/800x500/1a3bff/white?text=Dashboard+1',
-      'https://placehold.co/800x500/c5f400/black?text=Dashboard+2',
-      'https://placehold.co/800x500/0a0a0a/white?text=Dashboard+3',
+      'public/genze/portal.png',
+      'public/genze/login.png',
+      'public/genze/pembayaran.png',
+      'public/genze/invoice.png',
+      'public/genze/dashboard.png',
+      'public/genze/kelas.png',
     ],
   },
   {
@@ -147,18 +155,20 @@ const projects: Project[] = [
     tags: ['Figma', 'Prototype'],
     color: '#f0fdf4',
     accentColor: '#22c55e',
-    year: '2025',
+    year: '2024',
     description: 'Landing page SaaS dengan animasi smooth, conversion-optimized layout, dan performa tinggi. Built with Next.js dan Framer Motion.',
     link: 'https://github.com',
     screenshots: [
-      'https://placehold.co/800x500/1a3bff/white?text=Landing+1',
-      'https://placehold.co/800x500/c5f400/black?text=Landing+2',
-      'https://placehold.co/800x500/0a0a0a/white?text=Landing+3',
+      'public/figma-gojek/home.png',
+      'public/figma-gojek/menu.png',
+      'public/figma-gojek/promo.png',
+      'public/figma-gojek/history.png',
+      'public/figma-gojek/profile.png',
     ],
   },
 ]
 
-const CATEGORIES = ['All', 'Web Dev', 'UI/UX Design', 'Mobile App']
+const CATEGORIES = ['All', , 'Mobile App', 'Web Dev', 'UI/UX Design']
 
 const Work: React.FC = () => {
   const [filter, setFilter] = useState('All')
@@ -473,14 +483,25 @@ const Work: React.FC = () => {
             <div style={{ overflowY: 'auto', flex: 1 }}>
 
               {/* Main screenshot */}
-              <div style={{ position: 'relative', background: '#111', overflow: 'hidden' }}>
+              <div style={{ 
+                position: 'relative', 
+                background: '#111', 
+                overflow: 'hidden',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                maxHeight: '60vh',  // batas tinggi maksimal
+              }}>
                 <img
                   key={activeImg}
                   src={selected.screenshots[activeImg]}
                   alt={`Screenshot ${activeImg + 1}`}
                   style={{
-                    width: '100%', aspectRatio: '16/9',
-                    objectFit: 'cover', display: 'block',
+                    width: '100%',
+                    height: 'auto',         // ← ikuti tinggi natural gambar
+                    maxHeight: '60vh',      // ← jangan overflow layar
+                    objectFit: 'contain',   // ← tampilkan full tanpa crop
+                    display: 'block',
                     animation: 'fadeIn 0.25s ease',
                   }}
                 />

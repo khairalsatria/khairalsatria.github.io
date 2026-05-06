@@ -6,7 +6,7 @@ import Hero from './sections/Hero'
 import Features from './sections/Features'
 import About from './sections/About'
 import Work from './sections/Work'
-import Stack from './sections/Stack'
+import Tech from './sections/Tech'
 import Contact from './sections/Contact'
 
 function App() {
@@ -55,7 +55,7 @@ function App() {
         <Features />
         <About />
         <Work />
-        <Stack />
+        <Tech />
         <Contact />
       </main>
 

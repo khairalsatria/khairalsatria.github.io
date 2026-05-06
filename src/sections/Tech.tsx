@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 
 const CDN = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons'
 
-const stackItems = [
+const techItems = [
   { name: 'React.js',   src: `${CDN}/react/react-original.svg` },
   { name: 'Flutter',    src: `${CDN}/flutter/flutter-original.svg` },
   { name: 'Next.js',    src: `${CDN}/nextjs/nextjs-original.svg` },
@@ -44,7 +44,7 @@ const directions = [
   { x: -100,y: 0 },    // kiri
 ]
 
-const Stack: React.FC = () => {
+const Tech: React.FC = () => {
   const [hovered, setHovered] = useState<string | null>(null)
   const [visibleSet, setVisibleSet] = useState<Set<number>>(new Set())
   const sectionRef = useRef<HTMLDivElement>(null)
@@ -69,7 +69,7 @@ const Stack: React.FC = () => {
       ([entry]) => {
         if (entry.isIntersecting) {
           // Stagger each card with a small delay
-          stackItems.forEach((_, i) => {
+          techItems.forEach((_, i) => {
             setTimeout(() => {
               setVisibleSet(prev => new Set([...prev, i]))
             }, i * 45)
@@ -84,7 +84,7 @@ const Stack: React.FC = () => {
   }, [])
 
   return (
-    <section id="stack" style={{ padding: '100px 40px', background: 'white', borderTop: '2px solid var(--light)' }}>
+    <section id="tech" style={{ padding: '100px 40px', background: 'white', borderTop: '2px solid var(--light)' }}>
       <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
 
         {/* Header */}
@@ -117,7 +117,7 @@ const Stack: React.FC = () => {
             gap: '12px',
           }}
         >
-          {stackItems.map((item, i) => {
+          {techItems.map((item, i) => {
             const dir = directions[i % directions.length]
             const isVisible = visibleSet.has(i)
             const isHovered = hovered === item.name
@@ -178,4 +178,4 @@ const Stack: React.FC = () => {
   )
 }
 
-export default Stack
+export default Tech

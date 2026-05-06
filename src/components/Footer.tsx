@@ -3,13 +3,13 @@ import React from 'react'
 const Footer: React.FC = () => {
   const navLinks = [
     { label: 'Home', href: '#home' },
-    { label: 'Work', href: '#work' },
     { label: 'About', href: '#about' },
-    { label: 'Contact', href: '#contact' },
+    { label: 'Work', href: '#work' },
+    { label: 'Tech', href: '#tech' },
   ]
   const services = ['Programmer', 'Quality Assurance', 'Data Analysis', 'UI/UX Design']
-  const stack = ['Frontend', 'Mobile Dev', 'Backend', 'QA/Testing']
-  const social = ['GitHub', 'Instagram', 'LinkedIn', 'WhatsApp']
+  const tech = ['Frontend', 'Mobile Dev', 'Backend', 'QA/Testing']
+  const social = ['WhatsApp', 'Instagram', 'LinkedIn','GitHub' ]
 
   const colStyle: React.CSSProperties = {
     display: 'flex',
@@ -75,8 +75,8 @@ const Footer: React.FC = () => {
           {[
             { title: 'NAVIGATION', items: navLinks.map(l => ({ label: l.label, href: l.href })) },
             { title: 'SERVICES', items: services.map(s => ({ label: s, href: '#' })) },
-            { title: 'SKILLS', items: stack.map(s => ({ label: s, href: '#' })) },
-            { title: 'SOCIAL LINKS', items: social.map(s => ({ label: s, href: '#' })) },
+            { title: 'SKILLS', items: tech.map(s => ({ label: s, href: '#' })) },
+            { title: 'SOCIAL MEDIA', items: social.map(s => ({ label: s, href: '#' })) },
           ].map((col, i) => (
             <div key={i} style={colStyle}>
               <h4 style={{

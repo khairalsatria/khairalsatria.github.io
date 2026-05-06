@@ -9,7 +9,7 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const navLinks = ['Work', 'About', 'Stack', 'Contact']
+  const navLinks = ['Work', 'About', 'Tech', 'Contact']
 
   return (
     <nav style={{
@@ -83,7 +83,7 @@ const Navbar: React.FC = () => {
       </div>
 
       {/* CTA */}
-      <a href="#contact" style={{
+      <a href="https://wa.me/6281275645952" style={{
         background: 'var(--lime)',
         color: 'var(--black)',
         fontFamily: 'var(--font-display)',
