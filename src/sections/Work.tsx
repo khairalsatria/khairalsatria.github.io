@@ -33,7 +33,7 @@ const projects: Project[] = [
     ],
   },
   {
-    id: 2,
+    id: 4,
     title: 'Chatbot BKN',
     category: 'Web Dev',
     tags: ['Frontend', 'Next.js', 'Typescript'],
@@ -49,7 +49,7 @@ const projects: Project[] = [
     ],
   },
   {
-    id: 3,
+    id: 7,
     title: 'Sisfo Desa',
     category: 'UI/UX Design',
     tags: ['Figma', 'Prototype'],
@@ -66,7 +66,7 @@ const projects: Project[] = [
     ],
   },
   {
-    id: 4,
+    id: 2,
     title: 'JDIH Mobile BKN',
     category: 'Mobile App',
     tags: ['Frontend', 'Flutter', 'Figma'],
@@ -99,7 +99,7 @@ const projects: Project[] = [
     ],
   },
   {
-    id: 6,
+    id: 8,
     title: 'Kallos Moments',
     category: 'Web Dev',
     tags: ['Fullstack', 'PHP', 'Laravel'],
@@ -116,7 +116,7 @@ const projects: Project[] = [
     ],
   },
   {
-    id: 7,
+    id: 3,
     title: 'JDIH Mobile BKN',
     category: 'UI/UX Design',
     tags: ['Figma', 'Prototype'],
@@ -130,7 +130,7 @@ const projects: Project[] = [
     ],
   },
   {
-    id: 8,
+    id: 6,
     title: 'GenZE',
     category: 'Web Dev',
     tags: ['Fullstack', 'PHP', 'Laravel'],
@@ -231,12 +231,12 @@ const Work: React.FC = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
               <div style={{ width: '28px', height: '2px', background: 'var(--lime)' }} />
               <p style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', fontWeight: 700, letterSpacing: '0.15em', color: 'var(--lime)' }}>
-                WORKS COLLECTION
+                WORKS AND PROJECTS COLLECTION
               </p>
             </div>
             <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 'clamp(40px, 6vw, 80px)', letterSpacing: '-0.03em', color: 'white', lineHeight: 0.95 }}>
               Selected<br />
-              <span style={{ WebkitTextStroke: '2px rgba(255,255,255,0.3)', color: 'transparent' }}>Projects</span>
+              <span style={{ color: 'white' }}>Projects</span>
             </h2>
           </div>
 

@@ -18,7 +18,7 @@ interface Card {
   type: 'profile' | 'education' | 'experience'
   title: string
   name?: string
-  roles?: string[]   // ← sekarang array of roles
+  roles?: string[]
   location?: string
   email?: string
   nohp?: string
@@ -43,22 +43,22 @@ const cards: Card[] = [
     location: '📍 Jakarta Selatan, Indonesia',
     email: 'khairalsatriahaspi@gmail.com',
     nohp: '📞 +62 812-7564-5952',
-    image: '/pp.png',
+    image: 'public/pp.png',
     bio: 'Hello, I am Khairal Satria Haspi, Fresh Graduate of the Diploma Program in Information Management (Information Systems) at the State Polytechnic of Padang, in 2025. Possesses a keen interest in enhancing skills in the field of Information Technology, including Programming, Frontend Development, Backend Development, Fullstack Development, Software Testing, Data Analysis, Mobile Development, Web Development, UI/UX Design, Software Engineering, and more.',
+  },
+  {
+    type: 'education',
+    title: 'EDUCATION & CERTIFICATIONS',
     softSkills: [
-      'System Analysis', 
+      'System Analysis',
       'Problem Solving',
       'Debugging',
       'Collaborative Teamwork',
       'Analytical Thinking',
       'Growth Mindset',
       'Effective Communication',
-      'Time Management'
+      'Time Management',
     ],
-  },
-  {
-    type: 'education',
-    title: 'EDUCATION & CERTIFICATIONS',
     items: [
       { year: '2022 – 2025', school: 'Politeknik Negeri Padang', major: 'Manajemen Informatika', gpa: 'GPA 3.69' },
       { year: 'Feb – Jul 2024', school: 'Oracle Cloud Infrastructure Foundations', major: 'Talent Scouting Academy Digital Talent Scholarship 2024', gpa: '' },
@@ -147,7 +147,6 @@ const ProfileAvatar: React.FC<{ image?: string; name?: string; accentColor?: str
         cursor: 'default',
       }}
     >
-      {/* Rotating dashed ring */}
       <svg
         width="100"
         height="100"
@@ -170,7 +169,6 @@ const ProfileAvatar: React.FC<{ image?: string; name?: string; accentColor?: str
         />
       </svg>
 
-      {/* Counter-rotating accent dots */}
       <svg
         width="100"
         height="100"
@@ -196,7 +194,6 @@ const ProfileAvatar: React.FC<{ image?: string; name?: string; accentColor?: str
         })}
       </svg>
 
-      {/* Glow blob behind photo */}
       <div style={{
         position: 'absolute',
         inset: '6px',
@@ -207,7 +204,6 @@ const ProfileAvatar: React.FC<{ image?: string; name?: string; accentColor?: str
         opacity: hovered ? 1 : 0.5,
       }} />
 
-      {/* Photo */}
       <div style={{
         position: 'absolute',
         inset: '8px',
@@ -239,7 +235,6 @@ const ProfileAvatar: React.FC<{ image?: string; name?: string; accentColor?: str
         )}
       </div>
 
-      {/* Online badge */}
       <div style={{
         position: 'absolute',
         bottom: '10px', right: '4px',
@@ -392,7 +387,6 @@ const Features: React.FC = () => {
                   style={{ ...hiddenStyle, transitionDelay: '100ms', fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', color: 'var(--blue)', marginBottom: '20px' }}
                 >{card.title}</div>
 
-                {/* Enhanced Profile Avatar */}
                 <div
                   ref={el => { const idx = itemCounter++; setItemRef(idx)(el as HTMLDivElement) }}
                   style={{ ...hiddenStyle, transitionDelay: '140ms' }}
@@ -405,7 +399,7 @@ const Features: React.FC = () => {
                   style={{ ...hiddenStyle, transitionDelay: '200ms', fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '22px', marginBottom: '8px' }}
                 >{card.name}</div>
 
-                {/* ── Animated Role Badge ── */}
+                {/* Animated Role Badge */}
                 <div
                   ref={el => { const idx = itemCounter++; setItemRef(idx)(el as HTMLDivElement) }}
                   style={{ ...hiddenStyle, transitionDelay: '240ms', marginBottom: '20px', minHeight: '28px' }}
@@ -418,7 +412,6 @@ const Features: React.FC = () => {
                     letterSpacing: '0.05em',
                     transition: 'all 0.3s ease',
                   }}>
-                    {/* Blinking cursor dot */}
                     <span style={{
                       display: 'inline-block',
                       width: '6px', height: '6px',
@@ -458,33 +451,6 @@ const Features: React.FC = () => {
                     ref={el => { const idx = itemCounter++; setItemRef(idx)(el as HTMLDivElement) }}
                     style={{ ...hiddenStyle, transitionDelay: '480ms', fontFamily: 'var(--font-display)', fontSize: '13px', color: 'var(--gray)', lineHeight: 1.7, textAlign: 'justify', marginTop: '4px' }}
                   >{card.bio}</div>
-
-                  {/* ── Soft Skills ── */}
-                  {card.softSkills && card.softSkills.length > 0 && (
-                    <div
-                      ref={el => { const idx = itemCounter++; setItemRef(idx)(el as HTMLDivElement) }}
-                      style={{ ...hiddenStyle, transitionDelay: '540ms', marginTop: '16px' }}
-                    >
-                      <div style={{
-                        fontFamily: 'var(--font-mono)', fontSize: '10px', fontWeight: 700,
-                        letterSpacing: '0.12em', color: 'var(--blue)',
-                        marginBottom: '10px',
-                      }}>SOFT SKILLS</div>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                        {card.softSkills.map((skill, k) => (
-                          <span key={k} style={{
-                            background: 'rgba(26,59,255,0.07)',
-                            color: 'var(--blue)',
-                            fontFamily: 'var(--font-mono)', fontSize: '10px', fontWeight: 700,
-                            padding: '4px 12px', borderRadius: '50px',
-                            letterSpacing: '0.03em',
-                            display: 'inline-block',
-                            lineHeight: 1.6,
-                          }}>{skill}</span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
               </>
             )}
@@ -528,6 +494,39 @@ const Features: React.FC = () => {
                     )
                   })}
                 </div>
+
+                {/* ── Soft Skills (di bawah education) ── */}
+                {card.softSkills && card.softSkills.length > 0 && (
+                  <div
+                    ref={el => { const idx = itemCounter++; setItemRef(idx)(el as HTMLDivElement) }}
+                    style={{
+                      ...hiddenStyle,
+                      transitionDelay: `${160 + ((card.items?.length ?? 0) * 80) + 40}ms`,
+                      marginTop: '16px',
+                      borderTop: '1px solid var(--border)',
+                      paddingTop: '16px',
+                    }}
+                  >
+                    <div style={{
+                      fontFamily: 'var(--font-mono)', fontSize: '10px', fontWeight: 700,
+                      letterSpacing: '0.12em', color: 'var(--blue)',
+                      marginBottom: '10px',
+                    }}>SOFT SKILLS</div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                      {card.softSkills.map((skill, k) => (
+                        <span key={k} style={{
+                          background: 'rgba(26,59,255,0.07)',
+                          color: 'var(--blue)',
+                          fontFamily: 'var(--font-mono)', fontSize: '10px', fontWeight: 700,
+                          padding: '4px 12px', borderRadius: '50px',
+                          letterSpacing: '0.03em',
+                          display: 'inline-block',
+                          lineHeight: 1.6,
+                        }}>{skill}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </>
             )}
 
