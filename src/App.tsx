@@ -9,7 +9,6 @@ import Work from './sections/Work'
 import Tech from './sections/Tech'
 import Contact from './sections/Contact'
 import ScrollToTop from './components/ScrollToTop'
-import BugHunter from './components/BugHunter'
 import MemoryFlip from './components/MemoryFlip'
 
 function App() {
@@ -66,7 +65,6 @@ function App() {
         <About />
         <Work />
         <Tech />
-        
         <MemoryFlip />
         <Contact />
         <ScrollToTop />
