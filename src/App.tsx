@@ -9,7 +9,7 @@ import Work from './sections/Work'
 import Tech from './sections/Tech'
 import Contact from './sections/Contact'
 import ScrollToTop from './components/ScrollToTop'
-import BlockBlast from './components/Blockblast'
+import BlockBlast from './components/BlockBlast'
 
 function App() {
   const cursorRef = useRef<HTMLDivElement>(null)
