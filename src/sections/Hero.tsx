@@ -195,7 +195,7 @@ const Hero: React.FC = () => {
           lineHeight: 0.85, letterSpacing: '-0.03em',
           color: 'var(--lime)',
           textShadow: '6px 6px 0 rgba(0,0,0,0.2)',
-        }}>Hello, I Am</div>
+        }}>Hello, I am</div>
         <div style={{
           fontFamily: 'var(--font-display)', fontWeight: 800,
           fontSize: 'clamp(40px, 10vw, 150px)',

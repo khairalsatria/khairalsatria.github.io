@@ -18,12 +18,16 @@ function App() {
     const follower = followerRef.current
     if (!cursor || !follower) return
 
+    // Touch device — jangan jalankan cursor logic sama sekali
+    if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) return
+
     let mouseX = 0, mouseY = 0
     let followerX = 0, followerY = 0
+    let rafId: number
 
     const onMove = (e: MouseEvent) => {
-      mouseX = e.clientX * 1.111
-      mouseY = e.clientY * 1.111
+      mouseX = e.clientX  // tanpa * 1.111, karena zoom: 0.9 sudah dihapus dari CSS
+      mouseY = e.clientY
       cursor.style.left = mouseX - 6 + 'px'
       cursor.style.top = mouseY - 6 + 'px'
     }
@@ -33,17 +37,20 @@ function App() {
       followerY += (mouseY - followerY - 18) * 0.15
       follower.style.left = followerX + 'px'
       follower.style.top = followerY + 'px'
-      requestAnimationFrame(animate)
+      rafId = requestAnimationFrame(animate)
     }
 
     window.addEventListener('mousemove', onMove)
-    animate()
-    return () => window.removeEventListener('mousemove', onMove)
+    rafId = requestAnimationFrame(animate)
+
+    return () => {
+      window.removeEventListener('mousemove', onMove)
+      cancelAnimationFrame(rafId)  // cleanup RAF yang tadinya leak
+    }
   }, [])
 
   return (
     <>
-      {/* Custom cursor */}
       <div ref={cursorRef} className="cursor" />
       <div ref={followerRef} className="cursor-follower" />
 

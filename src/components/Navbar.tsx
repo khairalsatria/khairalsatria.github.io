@@ -1,8 +1,21 @@
 import React, { useState, useEffect } from 'react'
 
+function useBreakpoint() {
+  const [width, setWidth] = useState(
+    typeof window !== 'undefined' ? window.innerWidth : 1200
+  )
+  useEffect(() => {
+    const handler = () => setWidth(window.innerWidth)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
+  return { isMobile: width <= 768 }
+}
+
 const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const { isMobile } = useBreakpoint()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -10,35 +23,41 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Tutup menu saat resize ke desktop
+  // Close menu on resize to desktop
   useEffect(() => {
-    const onResize = () => {
-      if (window.innerWidth > 768) setMenuOpen(false)
-    }
-    window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
-  }, [])
+    if (!isMobile) setMenuOpen(false)
+  }, [isMobile])
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [menuOpen])
 
   const navLinks = ['Work', 'About', 'Tech', 'Contact']
 
-  const navBg = scrolled || menuOpen ? 'rgba(26,59,255,0.97)' : 'transparent'
+  const isActive = scrolled || menuOpen
 
   return (
     <>
       <style>{`
-        .hamburger { display: none; }
-        .nav-desktop-links { display: flex; }
-        .nav-cta { display: block; }
-
-        @media (max-width: 768px) {
-          .hamburger { display: flex !important; }
-          .nav-desktop-links { display: none !important; }
-          .nav-cta { display: none !important; }
+        .nav-link-item {
+          color: white;
+          text-decoration: none;
+          font-family: var(--font-display);
+          font-weight: 600;
+          font-size: 14px;
+          padding: 8px 20px;
+          border-radius: 50px;
+          transition: background 0.2s ease;
+          letter-spacing: 0.02em;
         }
-
+        .nav-link-item:hover {
+          background: rgba(255,255,255,0.2);
+        }
         .hamburger span {
           display: block;
-          width: 24px;
+          width: 22px;
           height: 2px;
           background: white;
           border-radius: 2px;
@@ -49,14 +68,18 @@ const Navbar: React.FC = () => {
         }
         .hamburger.open span:nth-child(2) {
           opacity: 0;
+          transform: scaleX(0);
         }
         .hamburger.open span:nth-child(3) {
           transform: translateY(-7px) rotate(-45deg);
         }
-
         @keyframes slideDown {
-          from { opacity: 0; transform: translateY(-10px); }
+          from { opacity: 0; transform: translateY(-8px); }
           to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeOverlay {
+          from { opacity: 0; }
+          to   { opacity: 1; }
         }
       `}</style>
 
@@ -64,132 +87,197 @@ const Navbar: React.FC = () => {
         position: 'fixed',
         top: 0, left: 0, right: 0,
         zIndex: 100,
-        padding: '14px 24px',
+        padding: isMobile ? '12px 20px' : '14px 24px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        transition: 'all 0.3s ease',
-        background: navBg,
-        backdropFilter: scrolled || menuOpen ? 'blur(10px)' : 'none',
+        transition: 'background 0.3s ease, backdrop-filter 0.3s ease',
+        background: isActive ? 'rgba(26,59,255,0.97)' : 'transparent',
+        backdropFilter: isActive ? 'blur(10px)' : 'none',
       }}>
+
         {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+        <a href="#home" style={{ display: 'flex', alignItems: 'center', gap: '2px', textDecoration: 'none', flexShrink: 0 }}>
           <span style={{
             fontFamily: 'var(--font-display)',
-            fontWeight: 800, fontSize: '18px', color: 'white',
+            fontWeight: 800,
+            fontSize: isMobile ? '15px' : '18px',
+            color: 'white',
             background: 'rgba(255,255,255,0.15)',
             border: '2px solid rgba(255,255,255,0.4)',
             borderRadius: '20px 4px 4px 20px',
-            padding: '4px 14px', letterSpacing: '0.05em',
+            padding: isMobile ? '3px 10px' : '4px 14px',
+            letterSpacing: '0.05em',
           }}>KHAIRAL</span>
           <span style={{
             fontFamily: 'var(--font-display)',
-            fontWeight: 800, fontSize: '18px', color: 'var(--black)',
+            fontWeight: 800,
+            fontSize: isMobile ? '15px' : '18px',
+            color: 'var(--black)',
             background: 'var(--lime)',
             borderRadius: '4px 20px 20px 4px',
-            padding: '4px 14px', letterSpacing: '0.05em',
+            padding: isMobile ? '3px 10px' : '4px 14px',
+            letterSpacing: '0.05em',
           }}>SATRIA</span>
+        </a>
+
+        {/* Nav Links — Desktop only */}
+        {!isMobile && (
+          <div style={{
+            display: 'flex',
+            gap: '4px',
+            background: 'rgba(255,255,255,0.1)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: '50px',
+            padding: '6px',
+          }}>
+            {navLinks.map(link => (
+              <a key={link} href={`#${link.toLowerCase()}`} className="nav-link-item">
+                {link}
+              </a>
+            ))}
+          </div>
+        )}
+
+        {/* Right side */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+
+          {/* CTA — Desktop only */}
+          {!isMobile && (
+            <a
+              href="https://wa.me/6281275645952"
+              style={{
+                background: 'var(--lime)', color: 'var(--black)',
+                fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '14px',
+                padding: '10px 24px', borderRadius: '50px', textDecoration: 'none',
+                border: '2px solid var(--lime)', transition: 'all 0.2s ease',
+                letterSpacing: '0.02em', cursor: 'none',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'transparent'
+                e.currentTarget.style.color = 'white'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'var(--lime)'
+                e.currentTarget.style.color = 'var(--black)'
+              }}
+            >Hire me</a>
+          )}
+
+          {/* Hamburger — Mobile only */}
+          {isMobile && (
+            <button
+              className={`hamburger ${menuOpen ? 'open' : ''}`}
+              onClick={() => setMenuOpen(prev => !prev)}
+              style={{
+                background: 'transparent', border: 'none', cursor: 'pointer',
+                display: 'flex', flexDirection: 'column', gap: '5px',
+                padding: '6px', borderRadius: '8px',
+              }}
+              aria-label="Toggle menu"
+            >
+              <span /><span /><span />
+            </button>
+          )}
         </div>
-
-        {/* Nav Links — Desktop */}
-        <div className="nav-desktop-links" style={{
-          gap: '4px',
-          background: 'rgba(255,255,255,0.1)',
-          border: '1px solid rgba(255,255,255,0.2)',
-          borderRadius: '50px',
-          padding: '6px',
-        }}>
-          {navLinks.map(link => (
-            <a key={link} href={`#${link.toLowerCase()}`} style={{
-              color: 'white', textDecoration: 'none',
-              fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '14px',
-              padding: '8px 20px', borderRadius: '50px',
-              transition: 'all 0.2s ease', letterSpacing: '0.02em',
-            }}
-            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.2)')}
-            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-            >{link}</a>
-          ))}
-        </div>
-
-        {/* CTA — Desktop */}
-        <a href="https://wa.me/6281275645952" className="nav-cta" style={{
-          background: 'var(--lime)', color: 'var(--black)',
-          fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '14px',
-          padding: '10px 24px', borderRadius: '50px', textDecoration: 'none',
-          border: '2px solid var(--lime)', transition: 'all 0.2s ease',
-          letterSpacing: '0.02em',
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.background = 'transparent'
-          e.currentTarget.style.color = 'white'
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.background = 'var(--lime)'
-          e.currentTarget.style.color = 'var(--black)'
-        }}
-        >Hire me</a>
-
-        {/* Hamburger — Mobile */}
-        <button
-          className={`hamburger ${menuOpen ? 'open' : ''}`}
-          onClick={() => setMenuOpen(prev => !prev)}
-          style={{
-            background: 'transparent', border: 'none', cursor: 'pointer',
-            flexDirection: 'column', gap: '5px', padding: '4px',
-          }}
-          aria-label="Toggle menu"
-        >
-          <span /><span /><span />
-        </button>
       </nav>
 
-      {/* Mobile Menu */}
-      {menuOpen && (
-        <div style={{
-          position: 'fixed',
-          top: '60px', left: 0, right: 0,
-          zIndex: 99,
-          background: 'rgba(26,59,255,0.98)',
-          backdropFilter: 'blur(12px)',
-          padding: '20px 24px 28px',
-          display: 'flex', flexDirection: 'column', gap: '4px',
-          borderTop: '1px solid rgba(255,255,255,0.1)',
-          animation: 'slideDown 0.25s ease',
-        }}>
-          {navLinks.map(link => (
-            <a key={link} href={`#${link.toLowerCase()}`}
-              onClick={() => setMenuOpen(false)}
-              style={{
-                color: 'white', textDecoration: 'none',
-                fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '16px',
-                padding: '14px 16px', borderRadius: '12px',
-                transition: 'background 0.2s ease', letterSpacing: '0.02em',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.1)')}
-              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-            >{link}</a>
-          ))}
-          <a href="https://wa.me/6281275645952"
+      {/* ── Mobile Menu Overlay ── */}
+      {isMobile && menuOpen && (
+        <>
+          {/* Backdrop */}
+          <div
             onClick={() => setMenuOpen(false)}
             style={{
-              display: 'block', marginTop: '12px',
-              background: 'var(--lime)', color: 'var(--black)',
-              textAlign: 'center', padding: '14px 24px',
-              borderRadius: '50px', fontFamily: 'var(--font-display)',
-              fontWeight: 700, fontSize: '15px', textDecoration: 'none',
-              border: '2px solid var(--lime)', transition: 'all 0.2s ease',
+              position: 'fixed',
+              inset: 0,
+              zIndex: 98,
+              background: 'rgba(0,0,0,0.5)',
+              backdropFilter: 'blur(4px)',
+              animation: 'fadeOverlay 0.2s ease',
             }}
-            onMouseEnter={e => {
-              e.currentTarget.style.background = 'transparent'
-              e.currentTarget.style.color = 'white'
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.background = 'var(--lime)'
-              e.currentTarget.style.color = 'var(--black)'
-            }}
-          >Hire me</a>
-        </div>
+          />
+
+          {/* Drawer */}
+          <div style={{
+            position: 'fixed',
+            top: '58px',
+            left: 0,
+            right: 0,
+            zIndex: 99,
+            background: 'rgba(15,30,200,0.98)',
+            backdropFilter: 'blur(16px)',
+            padding: '16px 20px 28px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '4px',
+            borderTop: '1px solid rgba(255,255,255,0.12)',
+            borderBottom: '1px solid rgba(255,255,255,0.08)',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+            animation: 'slideDown 0.25s cubic-bezier(0.16,1,0.3,1)',
+          }}>
+            {navLinks.map((link, i) => (
+              <a
+                key={link}
+                href={`#${link.toLowerCase()}`}
+                onClick={() => setMenuOpen(false)}
+                style={{
+                  color: 'white',
+                  textDecoration: 'none',
+                  fontFamily: 'var(--font-display)',
+                  fontWeight: 600,
+                  fontSize: '17px',
+                  padding: '14px 16px',
+                  borderRadius: '12px',
+                  transition: 'background 0.2s ease',
+                  letterSpacing: '0.02em',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  borderBottom: i < navLinks.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.1)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+              >
+                {link}
+                <span style={{ opacity: 0.4, fontSize: '18px' }}>→</span>
+              </a>
+            ))}
+
+            <a
+              href="https://wa.me/6281275645952"
+              onClick={() => setMenuOpen(false)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: '16px',
+                background: 'var(--lime)',
+                color: 'var(--black)',
+                textAlign: 'center',
+                padding: '15px 24px',
+                borderRadius: '50px',
+                fontFamily: 'var(--font-display)',
+                fontWeight: 700,
+                fontSize: '15px',
+                textDecoration: 'none',
+                border: '2px solid var(--lime)',
+                transition: 'all 0.2s ease',
+                gap: '8px',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'transparent'
+                e.currentTarget.style.color = 'white'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'var(--lime)'
+                e.currentTarget.style.color = 'var(--black)'
+              }}
+            >
+              Hire me ✦
+            </a>
+          </div>
+        </>
       )}
     </>
   )

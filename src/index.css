@@ -19,27 +19,40 @@
 
 html {
   scroll-behavior: smooth;
+  /* Ini yang fix navbar lebih lebar dari konten */
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 body {
-  zoom: 0.9;
   font-family: var(--font-display);
   background: var(--white);
   color: var(--black);
+  /* Jangan pakai zoom — bikin layout kacau di mobile */
+  /* zoom: 0.9; ← HAPUS INI */
   overflow-x: hidden;
+  max-width: 100%;
   cursor: none;
+  /* Gunakan font-size scaling sebagai pengganti zoom */
+  font-size: clamp(14px, 1.5vw, 16px);
 }
 
-/* Custom cursor */
+
+/* Custom cursor — sembunyikan di touch device */
+.cursor,
+.cursor-follower {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.1s ease;
+}
+
 .cursor {
   width: 12px;
   height: 12px;
   background: var(--lime);
   border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
   z-index: 9999;
-  transition: transform 0.1s ease;
   mix-blend-mode: multiply;
 }
 
@@ -48,10 +61,25 @@ body {
   height: 36px;
   border: 2px solid var(--blue);
   border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
   z-index: 9998;
   transition: transform 0.15s ease, left 0.15s ease, top 0.15s ease;
+}
+
+/* Sembunyikan custom cursor di touch device */
+@media (hover: none) and (pointer: coarse) {
+  .cursor,
+  .cursor-follower {
+    display: none !important;
+  }
+
+  /* Kembalikan cursor default di touch */
+  a, button {
+    cursor: pointer !important;
+  }
+
+  body {
+    cursor: auto !important;
+  }
 }
 
 a, button { cursor: none; }
@@ -116,4 +144,45 @@ a, button { cursor: none; }
 
 .animate-fade-in {
   animation: fadeIn 0.7s ease forwards;
+}
+
+/* ── Responsive utilities ── */
+
+/* Semua image & video tidak boleh overflow */
+img, video, svg, canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Semua section jangan overflow ke kanan */
+section, header, footer, nav, main, div {
+  max-width: 100%;
+}
+
+/* Matikan animasi float di mobile (hemat baterai + hindari reflow) */
+@media (max-width: 640px) {
+  .grid-bg {
+    background-size: 28px 28px;
+  }
+
+  /* Kurangi animasi berat di mobile */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(-3deg); }
+    50% { transform: translateY(-6px) rotate(-3deg); }
+  }
+
+  @keyframes float2 {
+    0%, 100% { transform: translateY(0px) rotate(4deg); }
+    50% { transform: translateY(-8px) rotate(4deg); }
+  }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
