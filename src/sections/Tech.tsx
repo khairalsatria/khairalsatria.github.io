@@ -32,17 +32,37 @@ const techItems = [
   { name: 'WordPress',  src: `${CDN}/wordpress/wordpress-original.svg` },
 ]
 
-// Arah mencar dari berbagai posisi — berulang sesuai index
 const directions = [
-  { x: -80, y: -80 },  // kiri atas
-  { x: 0,   y: -100 }, // atas
-  { x: 80,  y: -80 },  // kanan atas
-  { x: 100, y: 0 },    // kanan
-  { x: 80,  y: 80 },   // kanan bawah
-  { x: 0,   y: 100 },  // bawah
-  { x: -80, y: 80 },   // kiri bawah
-  { x: -100,y: 0 },    // kiri
+  { x: -80, y: -80 },
+  { x: 0,   y: -100 },
+  { x: 80,  y: -80 },
+  { x: 100, y: 0 },
+  { x: 80,  y: 80 },
+  { x: 0,   y: 100 },
+  { x: -80, y: 80 },
+  { x: -100,y: 0 },
 ]
+
+const useGridCols = () => {
+  const [cols, setCols] = useState(
+    typeof window !== 'undefined' && window.innerWidth < 768
+      ? 'repeat(3, 1fr)'
+      : 'repeat(auto-fill, minmax(100px, 1fr))'
+  )
+
+  useEffect(() => {
+    const handler = () => {
+      setCols(window.innerWidth < 768
+        ? 'repeat(3, 1fr)'
+        : 'repeat(auto-fill, minmax(100px, 1fr))'
+      )
+    }
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
+
+  return cols
+}
 
 const Tech: React.FC = () => {
   const [hovered, setHovered] = useState<string | null>(null)
@@ -50,8 +70,8 @@ const Tech: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null)
   const headerRef = useRef<HTMLDivElement>(null)
   const [headerVisible, setHeaderVisible] = useState(false)
+  const gridCols = useGridCols()
 
-  // Observe header
   useEffect(() => {
     if (!headerRef.current) return
     const obs = new IntersectionObserver(
@@ -62,13 +82,11 @@ const Tech: React.FC = () => {
     return () => obs.disconnect()
   }, [])
 
-  // Observe section — trigger all cards once section enters viewport
   useEffect(() => {
     if (!sectionRef.current) return
     const obs = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          // Stagger each card with a small delay
           techItems.forEach((_, i) => {
             setTimeout(() => {
               setVisibleSet(prev => new Set([...prev, i]))
@@ -113,7 +131,7 @@ const Tech: React.FC = () => {
           ref={sectionRef}
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
+            gridTemplateColumns: gridCols,
             gap: '12px',
           }}
         >
@@ -138,7 +156,6 @@ const Tech: React.FC = () => {
                   background: isHovered ? 'var(--light)' : 'white',
                   cursor: 'none',
 
-                  // Scatter-in animation
                   opacity: isVisible ? 1 : 0,
                   transform: isVisible
                     ? isHovered ? 'translateY(-6px) scale(1.06)' : 'translateY(0) scale(1)'
