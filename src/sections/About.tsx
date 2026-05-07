@@ -45,16 +45,54 @@ const About: React.FC = () => {
   const [hoveredSkill, setHoveredSkill] = React.useState<number | null>(null)
 
   return (
-    <section id="about" style={{ padding: '100px 40px', background: 'white', borderTop: '2px solid var(--light)' }}>
-      <div style={{
-        maxWidth: '1100px', margin: '0 auto',
-        display: 'grid', gridTemplateColumns: '1fr 1fr',
-        gap: '80px', alignItems: 'start',
-      }}>
+    <section id="about" style={{ padding: '100px 20px', background: 'white', borderTop: '2px solid var(--light)' }}>
+
+      <style>{`
+        .about-grid {
+          max-width: 1100px;
+          margin: 0 auto;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 80px;
+          align-items: start;
+        }
+
+        @media (max-width: 768px) {
+          .about-grid {
+            grid-template-columns: 1fr;
+            gap: 48px;
+          }
+        }
+
+        .about-stats-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr;
+          gap: 16px;
+        }
+
+        @media (max-width: 400px) {
+          .about-stats-grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+          }
+          .about-stats-grid > div {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-align: left !important;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% { box-shadow: 0 0 0 4px rgba(197,244,0,0.2); }
+          50%       { box-shadow: 0 0 0 8px rgba(197,244,0,0.08); }
+        }
+      `}</style>
+
+      <div className="about-grid">
 
         {/* ── LEFT: Services ── */}
         <div>
-          {/* Label */}
           <div
             ref={el => setRef(0)(el as HTMLDivElement)}
             style={{ ...hidden, transitionDelay: '0ms', fontFamily: 'var(--font-mono)', fontSize: '12px', fontWeight: 700, letterSpacing: '0.15em', color: 'var(--gray)', marginBottom: '40px' }}
@@ -73,15 +111,16 @@ const About: React.FC = () => {
                   borderTop: '1px solid var(--border)',
                   padding: '22px 0',
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  cursor: 'none',
+                  cursor: 'default',
                 }}
               >
                 <h3 style={{
                   fontFamily: 'var(--font-display)', fontWeight: 800,
-                  fontSize: 'clamp(24px, 3.5vw, 44px)', letterSpacing: '-0.02em',
+                  fontSize: 'clamp(20px, 3.5vw, 44px)', letterSpacing: '-0.02em',
                   color: hoveredSvc === i ? 'var(--blue)' : 'var(--black)',
                   transition: 'color 0.25s ease, transform 0.25s ease',
                   transform: hoveredSvc === i ? 'translateX(8px)' : 'translateX(0)',
+                  margin: 0,
                 }}>{svc}</h3>
                 <div style={{
                   width: '42px', height: '42px', borderRadius: '50%', flexShrink: 0,
@@ -106,10 +145,10 @@ const About: React.FC = () => {
           {/* Available badge */}
           <div
             ref={el => setRef(10)(el as HTMLDivElement)}
-            style={{ ...hidden, transitionDelay: '0ms', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '32px' }}
+            style={{ ...hidden, transitionDelay: '0ms', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '32px', flexWrap: 'wrap' }}
           >
             <div style={{
-              width: '10px', height: '10px', background: 'var(--lime)', borderRadius: '50%',
+              width: '10px', height: '10px', background: 'var(--lime)', borderRadius: '50%', flexShrink: 0,
               animation: 'pulse 2s ease infinite', boxShadow: '0 0 0 4px rgba(197,244,0,0.2)',
             }} />
             <span style={{
@@ -125,8 +164,8 @@ const About: React.FC = () => {
             style={{
               ...hidden, transitionDelay: '80ms',
               fontFamily: 'var(--font-display)', fontWeight: 800,
-              fontSize: 'clamp(26px, 3.5vw, 44px)', letterSpacing: '-0.03em',
-              lineHeight: 1.1, marginBottom: '20px',
+              fontSize: 'clamp(24px, 4vw, 44px)', letterSpacing: '-0.03em',
+              lineHeight: 1.1, marginBottom: '20px', margin: '0 0 20px 0',
             }}
           >
             Crafting digital{' '}
@@ -141,6 +180,7 @@ const About: React.FC = () => {
               ...hidden, transitionDelay: '160ms',
               fontFamily: 'var(--font-display)', fontSize: '15px',
               color: 'var(--gray)', lineHeight: 1.75, marginBottom: '36px',
+              margin: '0 0 36px 0',
             }}
           >
             Specializing in building high-performance web and mobile applications with a focus on clean code and exceptional user experience. I turn complex ideas into elegant, fast, and accessible interfaces.
@@ -164,7 +204,8 @@ const About: React.FC = () => {
                   transition: 'all 0.2s ease',
                   transform: hoveredSkill === i ? 'translateY(-3px) scale(1.05)' : 'translateY(0) scale(1)',
                   boxShadow: hoveredSkill === i ? '0 6px 16px rgba(0,0,0,0.15)' : 'none',
-                  cursor: 'none',
+                  cursor: 'default',
+                  userSelect: 'none',
                 }}
               >{skill}</span>
             ))}
@@ -176,23 +217,24 @@ const About: React.FC = () => {
             style={{
               ...hidden, transitionDelay: '320ms',
               background: 'var(--light)', borderRadius: '20px',
-              padding: '28px 32px',
-              display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px',
+              padding: '28px 24px',
             }}
           >
-            {stats.map((stat, i) => (
-              <div key={i} style={{ textAlign: 'center' }}>
-                <div style={{
-                  fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '32px',
-                  color: i === 1 ? 'var(--blue)' : 'var(--black)',
-                  lineHeight: 1, marginBottom: '4px',
-                }}>{stat.num}</div>
-                <div style={{
-                  fontFamily: 'var(--font-mono)', fontSize: '11px',
-                  color: 'var(--gray)', letterSpacing: '0.05em',
-                }}>{stat.label}</div>
-              </div>
-            ))}
+            <div className="about-stats-grid">
+              {stats.map((stat, i) => (
+                <div key={i} style={{ textAlign: 'center' }}>
+                  <div style={{
+                    fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '32px',
+                    color: i === 1 ? 'var(--blue)' : 'var(--black)',
+                    lineHeight: 1, marginBottom: '4px',
+                  }}>{stat.num}</div>
+                  <div style={{
+                    fontFamily: 'var(--font-mono)', fontSize: '11px',
+                    color: 'var(--gray)', letterSpacing: '0.05em',
+                  }}>{stat.label}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

@@ -168,7 +168,20 @@ const projects: Project[] = [
   },
 ]
 
-const CATEGORIES = ['All', , 'Mobile App', 'Web Dev', 'UI/UX Design']
+const CATEGORIES = ['All', 'Mobile App', 'Web Dev', 'UI/UX Design']
+
+/* ── hook: track window width ── */
+function useBreakpoint() {
+  const [width, setWidth] = useState(
+    typeof window !== 'undefined' ? window.innerWidth : 1200
+  )
+  useEffect(() => {
+    const handler = () => setWidth(window.innerWidth)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
+  return { isMobile: width < 640, isTablet: width >= 640 && width < 1024, width }
+}
 
 const Work: React.FC = () => {
   const [filter, setFilter] = useState('All')
@@ -177,8 +190,16 @@ const Work: React.FC = () => {
   const [hoveredId, setHoveredId] = useState<number | null>(null)
   const [visibleIds, setVisibleIds] = useState<Set<number>>(new Set())
   const cardRefs = useRef<Map<number, HTMLDivElement>>(new Map())
+  const { isMobile, isTablet } = useBreakpoint()
 
   const filtered = filter === 'All' ? projects : projects.filter(p => p.category === filter)
+
+  /* ── column count ── */
+  const cols = isMobile ? 1 : isTablet ? 2 : 3
+
+  /* ── split into columns for masonry ── */
+  const columns: Project[][] = Array.from({ length: cols }, () => [])
+  filtered.forEach((p, i) => columns[i % cols].push(p))
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -194,7 +215,7 @@ const Work: React.FC = () => {
     )
     cardRefs.current.forEach(el => observer.observe(el))
     return () => observer.disconnect()
-  }, [filtered.length])
+  }, [filtered.length, cols])
 
   const openModal = (project: Project) => {
     setSelected(project)
@@ -216,25 +237,45 @@ const Work: React.FC = () => {
   const getInitials = (title: string) =>
     title.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
 
-  return (
-    <section id="work" style={{ padding: '100px 40px 120px', background: 'var(--black)', position: 'relative', overflow: 'hidden' }}>
+  const paddings = [56, 88, 48, 72, 60, 80, 52, 76, 64]
 
+  return (
+    <section
+      id="work"
+      style={{
+        padding: isMobile ? '64px 20px 80px' : 'clamp(64px, 8vw, 100px) clamp(20px, 5vw, 40px) 120px',
+        background: 'var(--black)',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
       {/* Bg blobs */}
       <div style={{ position: 'absolute', width: '500px', height: '500px', background: 'rgba(26,59,255,0.06)', borderRadius: '50%', top: '-100px', right: '-100px', filter: 'blur(80px)', pointerEvents: 'none' }} />
       <div style={{ position: 'absolute', width: '400px', height: '400px', background: 'rgba(197,244,0,0.04)', borderRadius: '50%', bottom: '0', left: '-80px', filter: 'blur(80px)', pointerEvents: 'none' }} />
 
       <div style={{ maxWidth: '1100px', margin: '0 auto', position: 'relative' }}>
 
-        {/* Header */}
-        <div style={{ marginBottom: '64px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '32px' }}>
+        {/* ── Header ── */}
+        <div style={{
+          marginBottom: isMobile ? '40px' : '64px',
+          display: 'flex',
+          alignItems: isMobile ? 'flex-start' : 'flex-end',
+          justifyContent: 'space-between',
+          flexDirection: isMobile ? 'column' : 'row',
+          gap: '24px',
+        }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
               <div style={{ width: '28px', height: '2px', background: 'var(--lime)' }} />
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', fontWeight: 700, letterSpacing: '0.15em', color: 'var(--lime)' }}>
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', color: 'var(--lime)' }}>
                 WORKS AND PROJECTS COLLECTION
               </p>
             </div>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 'clamp(40px, 6vw, 80px)', letterSpacing: '-0.03em', color: 'white', lineHeight: 0.95 }}>
+            <h2 style={{
+              fontFamily: 'var(--font-display)', fontWeight: 800,
+              fontSize: 'clamp(36px, 8vw, 80px)',
+              letterSpacing: '-0.03em', color: 'white', lineHeight: 0.95,
+            }}>
               Selected<br />
               <span style={{ color: 'white' }}>Projects</span>
             </h2>
@@ -242,155 +283,165 @@ const Work: React.FC = () => {
 
           {/* Filter pills */}
           <div style={{
-            display: 'flex', gap: '8px', flexWrap: 'wrap',
+            display: 'flex', gap: '6px', flexWrap: 'wrap',
             background: 'rgba(255,255,255,0.04)',
             border: '1px solid rgba(255,255,255,0.08)',
             borderRadius: '50px', padding: '6px',
+            /* on mobile: allow horizontal scroll instead of wrapping */
+            ...(isMobile ? {
+              flexWrap: 'nowrap',
+              overflowX: 'auto',
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'none',
+              width: '100%',
+            } : {}),
           }}>
             {CATEGORIES.map(cat => (
-              <button key={cat} onClick={() => setFilter(cat || '')} style={{
-                background: filter === cat ? 'var(--lime)' : 'transparent',
-                color: filter === cat ? 'var(--black)' : 'rgba(255,255,255,0.5)',
-                fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 700,
-                padding: '9px 18px', borderRadius: '50px', border: 'none',
-                letterSpacing: '0.06em', transition: 'all 0.25s ease', cursor: 'none',
-              }}>
+              <button
+                key={cat}
+                onClick={() => setFilter(cat)}
+                style={{
+                  background: filter === cat ? 'var(--lime)' : 'transparent',
+                  color: filter === cat ? 'var(--black)' : 'rgba(255,255,255,0.5)',
+                  fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 700,
+                  padding: isMobile ? '8px 14px' : '9px 18px',
+                  borderRadius: '50px', border: 'none',
+                  letterSpacing: '0.06em', transition: 'all 0.25s ease', cursor: 'none',
+                  whiteSpace: 'nowrap', flexShrink: 0,
+                }}
+              >
                 {cat}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Masonry Grid */}
-        <div style={{ columns: 3, columnGap: '16px' }}>
-          {filtered.map((project, i) => {
-            const isVisible = visibleIds.has(project.id)
-            const paddings = [56, 88, 48, 72, 60, 80, 52, 76, 64]
-            return (
-              <div
-                key={project.id}
-                data-id={project.id}
-                ref={el => { if (el) cardRefs.current.set(project.id, el) }}
-                onClick={() => openModal(project)}
-                onMouseEnter={() => setHoveredId(project.id)}
-                onMouseLeave={() => setHoveredId(null)}
-                style={{
-                  breakInside: 'avoid',
-                  marginBottom: '16px',
-                  background: project.color,
-                  borderRadius: '24px',
-                  padding: `32px 28px ${paddings[i % paddings.length]}px`,
-                  position: 'relative',
-                  overflow: 'hidden',
-                  cursor: 'none',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '16px',
-                  border: '2px solid transparent',
-                  transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s ease, border-color 0.3s ease, opacity 0.6s ease',
-                  transform: !isVisible
-                    ? 'translateY(40px)'
-                    : hoveredId === project.id
-                    ? 'translateY(-8px) scale(1.02)'
-                    : 'translateY(0) scale(1)',
-                  opacity: isVisible ? 1 : 0,
-                  boxShadow: hoveredId === project.id
-                    ? `0 28px 60px rgba(0,0,0,0.4), 0 0 0 1px ${project.accentColor}40`
-                    : 'none',
-                  borderColor: hoveredId === project.id ? `${project.accentColor}40` : 'transparent',
-                  transitionDelay: isVisible ? '0ms' : `${i * 60}ms`,
-                }}
-              >
-                {/* Shimmer */}
-                <div style={{
-                  position: 'absolute', inset: 0,
-                  background: `linear-gradient(135deg, ${project.accentColor}10, transparent 60%)`,
-                  opacity: hoveredId === project.id ? 1 : 0,
-                  transition: 'opacity 0.4s ease',
-                  borderRadius: '24px', pointerEvents: 'none',
-                }} />
-
-                {/* Top accent line */}
-                <div style={{
-                  position: 'absolute', top: 0, left: '28px', right: '28px',
-                  height: '3px',
-                  background: `linear-gradient(90deg, ${project.accentColor}, transparent)`,
-                  borderRadius: '0 0 4px 4px',
-                  opacity: hoveredId === project.id ? 1 : 0,
-                  transition: 'opacity 0.3s ease',
-                }} />
-
-                {/* VIEW badge */}
-                <div style={{
-                  position: 'absolute', top: '18px', right: '18px',
-                  background: project.accentColor, color: 'white',
-                  fontFamily: 'var(--font-mono)', fontSize: '9px', fontWeight: 700,
-                  padding: '4px 10px', borderRadius: '50px', letterSpacing: '0.08em',
-                  opacity: hoveredId === project.id ? 1 : 0,
-                  transform: hoveredId === project.id ? 'translateY(0) scale(1)' : 'translateY(-6px) scale(0.9)',
-                  transition: 'all 0.25s cubic-bezier(0.16,1,0.3,1)',
-                }}>VIEW ↗</div>
-
-                {/* Content */}
-                <div style={{ position: 'relative' }}>
-                  {/* Project number */}
-                  <div style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontWeight: 700,
-                    fontSize: '12px',
-                    letterSpacing: '0.12em',
-                    color: project.accentColor,
-                    marginBottom: '20px',
-                    opacity: 0.85,
-                  }}>
-                    {String(project.id).padStart(2, '0')}
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                    <span style={{
-                      display: 'inline-block', width: '6px', height: '6px',
-                      background: project.accentColor, borderRadius: '50%',
+        {/* ── Masonry Grid (CSS columns → JS column split for stability) ── */}
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+          {columns.map((col, colIdx) => (
+            <div key={colIdx} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {col.map((project, rowIdx) => {
+                const globalIdx = colIdx + rowIdx * cols
+                const isVisible = visibleIds.has(project.id)
+                const pad = paddings[globalIdx % paddings.length]
+                return (
+                  <div
+                    key={project.id}
+                    data-id={project.id}
+                    ref={el => { if (el) cardRefs.current.set(project.id, el) }}
+                    onClick={() => openModal(project)}
+                    onMouseEnter={() => setHoveredId(project.id)}
+                    onMouseLeave={() => setHoveredId(null)}
+                    style={{
+                      background: project.color,
+                      borderRadius: '24px',
+                      padding: `28px 24px ${pad}px`,
+                      position: 'relative',
+                      overflow: 'hidden',
+                      cursor: 'none',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '16px',
+                      border: '2px solid transparent',
+                      transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s ease, border-color 0.3s ease, opacity 0.6s ease',
+                      transform: !isVisible
+                        ? 'translateY(40px)'
+                        : hoveredId === project.id
+                        ? 'translateY(-8px) scale(1.02)'
+                        : 'translateY(0) scale(1)',
+                      opacity: isVisible ? 1 : 0,
+                      boxShadow: hoveredId === project.id
+                        ? `0 28px 60px rgba(0,0,0,0.4), 0 0 0 1px ${project.accentColor}40`
+                        : 'none',
+                      borderColor: hoveredId === project.id ? `${project.accentColor}40` : 'transparent',
+                      transitionDelay: isVisible ? '0ms' : `${globalIdx * 60}ms`,
+                    }}
+                  >
+                    {/* Shimmer */}
+                    <div style={{
+                      position: 'absolute', inset: 0,
+                      background: `linear-gradient(135deg, ${project.accentColor}10, transparent 60%)`,
+                      opacity: hoveredId === project.id ? 1 : 0,
+                      transition: 'opacity 0.4s ease',
+                      borderRadius: '24px', pointerEvents: 'none',
                     }} />
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em', color: 'var(--gray)', textTransform: 'uppercase' }}>
-                      {project.category} · {project.year}
-                    </span>
-                  </div>
 
-                  <h3 style={{
-                    fontFamily: 'var(--font-display)', fontWeight: 800,
-                    fontSize: '22px', letterSpacing: '-0.02em',
-                    color: 'var(--black)', lineHeight: 1.2,
-                    transition: 'color 0.2s ease',
-                  }}>
-                    {project.title}
-                  </h3>
-                </div>
+                    {/* Top accent line */}
+                    <div style={{
+                      position: 'absolute', top: 0, left: '24px', right: '24px',
+                      height: '3px',
+                      background: `linear-gradient(90deg, ${project.accentColor}, transparent)`,
+                      borderRadius: '0 0 4px 4px',
+                      opacity: hoveredId === project.id ? 1 : 0,
+                      transition: 'opacity 0.3s ease',
+                    }} />
 
-                {/* Tags + arrow */}
-                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
-                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                    {project.tags.map(tag => (
-                      <span key={tag} style={{
-                        background: 'rgba(0,0,0,0.07)', color: 'var(--black)',
-                        fontFamily: 'var(--font-mono)', fontSize: '10px', fontWeight: 700,
-                        padding: '4px 10px', borderRadius: '50px', letterSpacing: '0.04em',
-                      }}>{tag}</span>
-                    ))}
+                    {/* VIEW badge */}
+                    <div style={{
+                      position: 'absolute', top: '16px', right: '16px',
+                      background: project.accentColor, color: 'white',
+                      fontFamily: 'var(--font-mono)', fontSize: '9px', fontWeight: 700,
+                      padding: '4px 10px', borderRadius: '50px', letterSpacing: '0.08em',
+                      opacity: hoveredId === project.id ? 1 : 0,
+                      transform: hoveredId === project.id ? 'translateY(0) scale(1)' : 'translateY(-6px) scale(0.9)',
+                      transition: 'all 0.25s cubic-bezier(0.16,1,0.3,1)',
+                    }}>VIEW ↗</div>
+
+                    {/* Content */}
+                    <div style={{ position: 'relative' }}>
+                      <div style={{
+                        fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '12px',
+                        letterSpacing: '0.12em', color: project.accentColor, marginBottom: '16px', opacity: 0.85,
+                      }}>
+                        {String(project.id).padStart(2, '0')}
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                        <span style={{
+                          display: 'inline-block', width: '6px', height: '6px',
+                          background: project.accentColor, borderRadius: '50%', flexShrink: 0,
+                        }} />
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em', color: 'var(--gray)', textTransform: 'uppercase' }}>
+                          {project.category} · {project.year}
+                        </span>
+                      </div>
+
+                      <h3 style={{
+                        fontFamily: 'var(--font-display)', fontWeight: 800,
+                        fontSize: isMobile ? '20px' : '22px',
+                        letterSpacing: '-0.02em', color: 'var(--black)', lineHeight: 1.2,
+                      }}>
+                        {project.title}
+                      </h3>
+                    </div>
+
+                    {/* Tags + arrow */}
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
+                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                        {project.tags.map(tag => (
+                          <span key={tag} style={{
+                            background: 'rgba(0,0,0,0.07)', color: 'var(--black)',
+                            fontFamily: 'var(--font-mono)', fontSize: '10px', fontWeight: 700,
+                            padding: '4px 10px', borderRadius: '50px', letterSpacing: '0.04em',
+                          }}>{tag}</span>
+                        ))}
+                      </div>
+                      <div style={{
+                        width: '34px', height: '34px',
+                        background: hoveredId === project.id ? project.accentColor : 'rgba(0,0,0,0.08)',
+                        borderRadius: '50%',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: hoveredId === project.id ? 'white' : 'var(--black)',
+                        fontSize: '15px', flexShrink: 0,
+                        transition: 'all 0.35s cubic-bezier(0.16,1,0.3,1)',
+                        transform: hoveredId === project.id ? 'rotate(45deg) scale(1.1)' : 'rotate(0) scale(1)',
+                      }}>↗</div>
+                    </div>
                   </div>
-                  <div style={{
-                    width: '34px', height: '34px',
-                    background: hoveredId === project.id ? project.accentColor : 'rgba(0,0,0,0.08)',
-                    borderRadius: '50%',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: hoveredId === project.id ? 'white' : 'var(--black)',
-                    fontSize: '15px', flexShrink: 0,
-                    transition: 'all 0.35s cubic-bezier(0.16,1,0.3,1)',
-                    transform: hoveredId === project.id ? 'rotate(45deg) scale(1.1)' : 'rotate(0) scale(1)',
-                  }}>↗</div>
-                </div>
-              </div>
-            )
-          })}
+                )
+              })}
+            </div>
+          ))}
         </div>
       </div>
 
@@ -403,45 +454,57 @@ const Work: React.FC = () => {
             background: 'rgba(0,0,0,0.88)',
             backdropFilter: 'blur(12px)',
             zIndex: 1000,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            padding: '32px',
+            display: 'flex', alignItems: 'flex-end',
+            justifyContent: 'center',
+            padding: isMobile ? '0' : '32px',
             animation: 'fadeIn 0.2s ease',
           }}
         >
           <div
             onClick={e => e.stopPropagation()}
             style={{
-              background: 'white', borderRadius: '28px',
-              width: '100%', maxWidth: '900px', maxHeight: '92vh',
-              overflow: 'hidden', display: 'flex', flexDirection: 'column',
-              animation: 'slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
+              background: 'white',
+              borderRadius: isMobile ? '24px 24px 0 0' : '28px',
+              width: '100%',
+              maxWidth: isMobile ? '100%' : '900px',
+              maxHeight: isMobile ? '92dvh' : '92vh',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              animation: isMobile ? 'slideUpMobile 0.35s cubic-bezier(0.16, 1, 0.3, 1)' : 'slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
               boxShadow: '0 40px 120px rgba(0,0,0,0.6)',
             }}
           >
             {/* Modal Header */}
             <div style={{
-              padding: '24px 32px',
+              padding: isMobile ? '20px 20px 16px' : '24px 32px',
               borderBottom: '1px solid var(--border)',
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               flexShrink: 0,
               background: selected.color,
+              gap: '12px',
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                {/* Initials box */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
                 <div style={{
-                  width: '52px', height: '52px',
+                  width: isMobile ? '44px' : '52px',
+                  height: isMobile ? '44px' : '52px',
                   background: selected.accentColor,
                   borderRadius: '16px',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontFamily: 'var(--font-display)', fontWeight: 800,
-                  fontSize: '18px', color: 'white',
+                  fontSize: isMobile ? '15px' : '18px', color: 'white',
                   letterSpacing: '-0.02em', flexShrink: 0,
                   boxShadow: `0 8px 24px ${selected.accentColor}50`,
                 }}>
                   {getInitials(selected.title)}
                 </div>
-                <div>
-                  <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', letterSpacing: '-0.02em', color: 'var(--black)' }}>
+                <div style={{ minWidth: 0 }}>
+                  <h3 style={{
+                    fontFamily: 'var(--font-display)', fontWeight: 800,
+                    fontSize: isMobile ? '16px' : '20px',
+                    letterSpacing: '-0.02em', color: 'var(--black)',
+                    whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                  }}>
                     {selected.title}
                   </h3>
                   <div style={{ display: 'flex', gap: '6px', marginTop: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
@@ -455,7 +518,7 @@ const Work: React.FC = () => {
                       fontFamily: 'var(--font-mono)', fontSize: '10px', fontWeight: 700,
                       padding: '3px 10px', borderRadius: '50px',
                     }}>{selected.year}</span>
-                    {selected.tags.map(t => (
+                    {!isMobile && selected.tags.map(t => (
                       <span key={t} style={{
                         background: 'rgba(0,0,0,0.06)', color: 'var(--black)',
                         fontFamily: 'var(--font-mono)', fontSize: '10px', fontWeight: 700,
@@ -480,17 +543,17 @@ const Work: React.FC = () => {
             </div>
 
             {/* Modal Body */}
-            <div style={{ overflowY: 'auto', flex: 1 }}>
+            <div style={{ overflowY: 'auto', flex: 1, WebkitOverflowScrolling: 'touch' }}>
 
               {/* Main screenshot */}
-              <div style={{ 
-                position: 'relative', 
-                background: '#111', 
+              <div style={{
+                position: 'relative',
+                background: '#111',
                 overflow: 'hidden',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                maxHeight: '60vh',  // batas tinggi maksimal
+                maxHeight: isMobile ? '50vh' : '60vh',
               }}>
                 <img
                   key={activeImg}
@@ -498,56 +561,49 @@ const Work: React.FC = () => {
                   alt={`Screenshot ${activeImg + 1}`}
                   style={{
                     width: '100%',
-                    height: 'auto',         // ← ikuti tinggi natural gambar
-                    maxHeight: '60vh',      // ← jangan overflow layar
-                    objectFit: 'contain',   // ← tampilkan full tanpa crop
+                    height: 'auto',
+                    maxHeight: isMobile ? '50vh' : '60vh',
+                    objectFit: 'contain',
                     display: 'block',
                     animation: 'fadeIn 0.25s ease',
                   }}
                 />
 
-                {/* Bottom gradient */}
                 <div style={{
                   position: 'absolute', bottom: 0, left: 0, right: 0, height: '80px',
                   background: 'linear-gradient(to top, rgba(0,0,0,0.5), transparent)',
                   pointerEvents: 'none',
                 }} />
 
-                {/* Nav arrows */}
                 {selected.screenshots.length > 1 && (
                   <>
                     <button
                       onClick={() => setActiveImg(p => (p - 1 + selected.screenshots.length) % selected.screenshots.length)}
                       style={{
-                        position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)',
-                        width: '44px', height: '44px',
+                        position: 'absolute', left: isMobile ? '10px' : '16px', top: '50%', transform: 'translateY(-50%)',
+                        width: isMobile ? '36px' : '44px', height: isMobile ? '36px' : '44px',
                         background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(8px)',
                         border: '1px solid rgba(255,255,255,0.2)', borderRadius: '50%',
-                        color: 'white', fontSize: '22px', cursor: 'none',
+                        color: 'white', fontSize: '20px', cursor: 'none',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         transition: 'all 0.2s ease',
                       }}
-                      onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.25)'}
-                      onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.12)'}
                     >‹</button>
                     <button
                       onClick={() => setActiveImg(p => (p + 1) % selected.screenshots.length)}
                       style={{
-                        position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)',
-                        width: '44px', height: '44px',
+                        position: 'absolute', right: isMobile ? '10px' : '16px', top: '50%', transform: 'translateY(-50%)',
+                        width: isMobile ? '36px' : '44px', height: isMobile ? '36px' : '44px',
                         background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(8px)',
                         border: '1px solid rgba(255,255,255,0.2)', borderRadius: '50%',
-                        color: 'white', fontSize: '22px', cursor: 'none',
+                        color: 'white', fontSize: '20px', cursor: 'none',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         transition: 'all 0.2s ease',
                       }}
-                      onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.25)'}
-                      onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.12)'}
                     >›</button>
                   </>
                 )}
 
-                {/* Dot indicators */}
                 {selected.screenshots.length > 1 && (
                   <div style={{
                     position: 'absolute', bottom: '16px', left: '50%', transform: 'translateX(-50%)',
@@ -573,9 +629,12 @@ const Work: React.FC = () => {
               {/* Thumbnail strip */}
               {selected.screenshots.length > 1 && (
                 <div style={{
-                  display: 'flex', gap: '10px', padding: '16px 32px',
+                  display: 'flex', gap: '10px',
+                  padding: isMobile ? '12px 16px' : '16px 32px',
                   background: 'var(--light)', overflowX: 'auto',
                   borderBottom: '1px solid var(--border)',
+                  WebkitOverflowScrolling: 'touch',
+                  scrollbarWidth: 'none',
                 }}>
                   {selected.screenshots.map((src, idx) => (
                     <div
@@ -593,7 +652,9 @@ const Work: React.FC = () => {
                         src={src}
                         alt={`Thumb ${idx + 1}`}
                         style={{
-                          width: '110px', height: '68px', objectFit: 'cover', display: 'block',
+                          width: isMobile ? '88px' : '110px',
+                          height: isMobile ? '56px' : '68px',
+                          objectFit: 'cover', display: 'block',
                           opacity: activeImg === idx ? 1 : 0.55,
                           transition: 'opacity 0.2s ease',
                         }}
@@ -604,8 +665,19 @@ const Work: React.FC = () => {
               )}
 
               {/* Description & CTA */}
-              <div style={{ padding: '28px 32px 32px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '24px', flexWrap: 'wrap' }}>
-                <p style={{ fontFamily: 'var(--font-display)', fontSize: '15px', color: 'var(--gray)', lineHeight: 1.75, maxWidth: '560px', flex: 1 }}>
+              <div style={{
+                padding: isMobile ? '20px 20px 28px' : '28px 32px 32px',
+                display: 'flex',
+                alignItems: isMobile ? 'stretch' : 'flex-start',
+                justifyContent: 'space-between',
+                flexDirection: isMobile ? 'column' : 'row',
+                gap: '20px',
+                flexWrap: 'wrap',
+              }}>
+                <p style={{
+                  fontFamily: 'var(--font-display)', fontSize: isMobile ? '14px' : '15px',
+                  color: 'var(--gray)', lineHeight: 1.75, maxWidth: '560px', flex: 1,
+                }}>
                   {selected.description}
                 </p>
                 <a
@@ -617,6 +689,7 @@ const Work: React.FC = () => {
                     fontFamily: 'var(--font-display)', fontWeight: 700,
                     fontSize: '14px', padding: '14px 28px', borderRadius: '50px',
                     textDecoration: 'none', display: 'flex', alignItems: 'center',
+                    justifyContent: 'center',
                     gap: '8px', flexShrink: 0, transition: 'all 0.25s ease',
                     boxShadow: `0 8px 24px ${selected.accentColor}40`,
                   }}
@@ -636,6 +709,12 @@ const Work: React.FC = () => {
           </div>
         </div>
       )}
+
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(32px) } to { opacity: 1; transform: translateY(0) } }
+        @keyframes slideUpMobile { from { opacity: 0; transform: translateY(100%) } to { opacity: 1; transform: translateY(0) } }
+      `}</style>
     </section>
   )
 }
