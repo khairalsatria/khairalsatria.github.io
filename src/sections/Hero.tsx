@@ -109,7 +109,7 @@ const Hero: React.FC = () => {
         padding: '120px 24px 80px',
       }}
     >
-      {/* Background layers — tidak berubah */}
+      {/* Background layers */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none',
         background: `
@@ -219,7 +219,6 @@ const Hero: React.FC = () => {
         </div>
       </div>
 
-      {/* ── Floating cards: HANYA tampil di desktop ── */}
       <style>{`
         .hero-float-cards { display: contents; }
 
@@ -227,7 +226,6 @@ const Hero: React.FC = () => {
           .hero-float-cards { display: none; }
         }
 
-        /* Mobile: stats row di bawah title */
         .hero-mobile-stats {
           display: none;
           position: relative;
@@ -296,39 +294,58 @@ const Hero: React.FC = () => {
           from { opacity: 0; transform: translateY(-10px); }
           to   { opacity: 1; transform: translateY(0); }
         }
+
+        /* ── Animasi card masuk dari luar layar ── */
+        @keyframes slideFromRight {
+          from { opacity: 0; transform: translateX(160px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideFromLeft {
+          from { opacity: 0; transform: translateX(-160px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideFromTop {
+          from { opacity: 0; transform: translateY(-120px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideFromBottom {
+          from { opacity: 0; transform: translateY(160px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
       `}</style>
 
       {/* Desktop floating cards */}
       <div className="hero-float-cards">
-        {/* Card 1 - Top Right */}
+
+        {/* Card 1 - Top Right → masuk dari kanan */}
         <div style={{
           position: 'absolute', right: '60px', top: '180px', zIndex: 10,
           background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(16px)',
           border: '1px solid rgba(255,255,255,0.18)',
           borderRadius: '20px', padding: '20px 24px',
-          animation: 'float 4s ease-in-out infinite',
+          animation: 'slideFromRight 0.8s cubic-bezier(0.16,1,0.3,1) 0.3s both, float 4s ease-in-out 1.4s infinite',
           boxShadow: '0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.15)',
         }}>
           <div style={{ color: 'white', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '16px', marginBottom: '4px' }}>IT Enthusiast</div>
           <div style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'var(--font-mono)', fontSize: '12px' }}>1+ yrs experience</div>
         </div>
 
-        {/* Card 2 - Bottom Right */}
+        {/* Card 2 - Bottom Right → masuk dari bawah */}
         <div style={{
           position: 'absolute', right: '200px', bottom: '100px', zIndex: 10,
           background: 'var(--lime)', borderRadius: '20px', padding: '20px 24px',
-          animation: 'float2 4.5s ease-in-out infinite',
+          animation: 'slideFromBottom 0.8s cubic-bezier(0.16,1,0.3,1) 0.55s both, float2 4.5s ease-in-out 1.6s infinite',
           boxShadow: '0 12px 40px rgba(197,244,0,0.35)',
         }}>
           <div style={{ color: 'var(--black)', fontFamily: 'var(--font-mono)', fontSize: '12px', fontWeight: 700, marginBottom: '4px', letterSpacing: '0.1em' }}>PROJECTS</div>
           <div style={{ color: 'var(--black)', fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '32px' }}>10+</div>
         </div>
 
-        {/* Card 3 - Top Left */}
+        {/* Card 3 - Top Left → masuk dari atas */}
         <div style={{
           position: 'absolute', left: '140px', top: '110px', zIndex: 10,
           background: 'var(--lime)', borderRadius: '20px', padding: '20px 24px',
-          animation: 'float 6s ease-in-out infinite',
+          animation: 'slideFromTop 0.8s cubic-bezier(0.16,1,0.3,1) 0.2s both, float 6s ease-in-out 1.2s infinite',
           display: 'flex', alignItems: 'center', gap: '12px',
           boxShadow: '0 12px 40px rgba(197,244,0,0.3)',
         }}>
@@ -339,13 +356,13 @@ const Hero: React.FC = () => {
           </div>
         </div>
 
-        {/* Card 4 - Bottom Left */}
+        {/* Card 4 - Bottom Left → masuk dari kiri */}
         <div style={{
           position: 'absolute', left: '200px', bottom: '80px', zIndex: 10,
           background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(16px)',
           border: '1px solid rgba(255,255,255,0.15)',
           borderRadius: '20px', padding: '20px 24px',
-          animation: 'float2 5s ease-in-out infinite',
+          animation: 'slideFromLeft 0.8s cubic-bezier(0.16,1,0.3,1) 0.65s both, float2 5s ease-in-out 1.7s infinite',
           boxShadow: '0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)',
         }}>
           <div style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', marginBottom: '12px' }}>Skills Open</div>
@@ -359,13 +376,13 @@ const Hero: React.FC = () => {
           </div>
         </div>
 
-        {/* Card 5 - Center Right badge */}
+        {/* Card 5 - Center Right → masuk dari kanan */}
         <div style={{
           position: 'absolute', right: '80px', top: '50%', transform: 'translateY(-50%)', zIndex: 10,
           background: 'rgba(26,59,255,0.7)', backdropFilter: 'blur(12px)',
           border: '2px solid var(--lime)',
           borderRadius: '50px', padding: '12px 20px',
-          animation: 'float 7s ease-in-out infinite',
+          animation: 'slideFromRight 0.8s cubic-bezier(0.16,1,0.3,1) 0.85s both, float 7s ease-in-out 1.9s infinite',
           display: 'flex', alignItems: 'center', gap: '8px',
           boxShadow: '0 0 0 4px rgba(197,244,0,0.1)',
         }}>
@@ -374,7 +391,7 @@ const Hero: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile stats pills — tampil di bawah title */}
+      {/* Mobile stats pills */}
       <div className="hero-mobile-stats" style={{ position: 'relative', zIndex: 10, marginTop: '40px' }}>
         <div className="hero-stat-pill">
           <span style={{ fontSize: '16px' }}>⚡</span>

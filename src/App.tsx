@@ -8,6 +8,7 @@ import About from './sections/About'
 import Work from './sections/Work'
 import Tech from './sections/Tech'
 import Contact from './sections/Contact'
+import ScrollToTop from './components/ScrollToTop'
 
 function App() {
   const cursorRef = useRef<HTMLDivElement>(null)
@@ -64,6 +65,7 @@ function App() {
         <Work />
         <Tech />
         <Contact />
+        <ScrollToTop />
       </main>
 
       <Footer />
