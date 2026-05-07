@@ -9,7 +9,7 @@ import Work from './sections/Work'
 import Tech from './sections/Tech'
 import Contact from './sections/Contact'
 import ScrollToTop from './components/ScrollToTop'
-import BugHunter from './components/BugHunter'
+import BlockBlast from './components/Blockblast'
 
 function App() {
   const cursorRef = useRef<HTMLDivElement>(null)
@@ -65,7 +65,7 @@ function App() {
         <About />
         <Work />
         <Tech />
-        <BugHunter />
+        <BlockBlast />
         <Contact />
         <ScrollToTop />
         
