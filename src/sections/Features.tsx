@@ -275,7 +275,7 @@ const Features: React.FC = () => {
           display: 'flex',
           gap: '60px',
           whiteSpace: 'nowrap',
-          animation: 'marquee 70s linear infinite',
+          animation: 'marquee 10s linear infinite',
           width: 'max-content',
         }}>
           {[...Array(6)].map((_, i) => (

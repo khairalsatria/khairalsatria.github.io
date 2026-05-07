@@ -135,20 +135,10 @@ function useBreakpoint() {
     window.addEventListener('resize', handler)
     return () => window.removeEventListener('resize', handler)
   }, [])
+  // ✅ Mobile: 2 kolom, Tablet: 2 kolom, Desktop: 3 kolom
   return { isMobile: width < 640, isTablet: width >= 640 && width < 1024, width }
 }
 
-/*
- * distributeRowFirst: mengisi kolom secara row-first agar urutan visual
- * di layar adalah 1 2 3 / 4 5 6 / 7 8 9 (bukan 1 4 7 / 2 5 8 / 3 6 9)
- *
- * Cara kerja dengan cols=3, items=[1..9]:
- *   i=0 → col[0%3=0].push(1)   i=1 → col[1%3=1].push(2)   i=2 → col[2%3=2].push(3)
- *   i=3 → col[3%3=0].push(4)   i=4 → col[4%3=1].push(5)   i=5 → col[5%3=2].push(6)
- *   ...
- * Hasil: col[0]=[1,4,7]  col[1]=[2,5,8]  col[2]=[3,6,9]
- * Tampil: kolom kiri=1,4,7 | tengah=2,5,8 | kanan=3,6,9 → visual row: 1 2 3 | 4 5 6 | 7 8 9 ✓
- */
 function distributeRowFirst<T>(items: T[], cols: number): T[][] {
   const result: T[][] = Array.from({ length: cols }, () => [])
   items.forEach((item, i) => result[i % cols].push(item))
@@ -165,7 +155,9 @@ const Work: React.FC = () => {
   const { isMobile, isTablet } = useBreakpoint()
 
   const filtered = filter === 'All' ? projects : projects.filter(p => p.category === filter)
-  const cols = isMobile ? 1 : isTablet ? 2 : 3
+
+  // ✅ Mobile: 2 kolom | Tablet: 2 kolom | Desktop: 3 kolom
+  const cols = isMobile ? 2 : isTablet ? 2 : 3
   const columns = distributeRowFirst(filtered, cols)
 
   useEffect(() => {
@@ -210,7 +202,7 @@ const Work: React.FC = () => {
     <section
       id="work"
       style={{
-        padding: isMobile ? '64px 20px 80px' : 'clamp(64px, 8vw, 100px) clamp(20px, 5vw, 40px) 120px',
+        padding: isMobile ? '64px 16px 80px' : 'clamp(64px, 8vw, 100px) clamp(20px, 5vw, 40px) 120px',
         background: 'var(--black)',
         position: 'relative',
         overflow: 'hidden',
@@ -223,7 +215,7 @@ const Work: React.FC = () => {
 
         {/* Header */}
         <div style={{
-          marginBottom: isMobile ? '40px' : '64px',
+          marginBottom: isMobile ? '32px' : '64px',
           display: 'flex',
           alignItems: isMobile ? 'flex-start' : 'flex-end',
           justifyContent: 'space-between',
@@ -264,7 +256,8 @@ const Work: React.FC = () => {
                   background: filter === cat ? 'var(--lime)' : 'transparent',
                   color: filter === cat ? 'var(--black)' : 'rgba(255,255,255,0.5)',
                   fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 700,
-                  padding: isMobile ? '8px 14px' : '9px 18px',
+                  // ✅ Mobile: padding lebih compact biar muat 4 pill
+                  padding: isMobile ? '7px 10px' : '9px 18px',
                   borderRadius: '50px', border: 'none',
                   letterSpacing: '0.06em', transition: 'all 0.25s ease', cursor: 'none',
                   whiteSpace: 'nowrap', flexShrink: 0,
@@ -274,14 +267,17 @@ const Work: React.FC = () => {
           </div>
         </div>
 
-        {/* Masonry Grid */}
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+        {/* Masonry Grid — gap lebih kecil di mobile karena 2 kolom */}
+        <div style={{ display: 'flex', gap: isMobile ? '10px' : '16px', alignItems: 'flex-start' }}>
           {columns.map((col, colIdx) => (
-            <div key={colIdx} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div key={colIdx} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: isMobile ? '10px' : '16px' }}>
               {col.map((project, rowIdx) => {
                 const globalIdx = colIdx + rowIdx * cols
                 const isVisible = visibleIds.has(project.id)
-                const pad = bottomPads[globalIdx % bottomPads.length]
+                // ✅ Mobile: bottom padding lebih kecil biar card tidak terlalu tinggi
+                const pad = isMobile
+                  ? bottomPads[globalIdx % bottomPads.length] * 0.5
+                  : bottomPads[globalIdx % bottomPads.length]
                 return (
                   <div
                     key={project.id}
@@ -292,14 +288,15 @@ const Work: React.FC = () => {
                     onMouseLeave={() => setHoveredId(null)}
                     style={{
                       background: project.color,
-                      borderRadius: '24px',
-                      padding: `28px 24px ${pad}px`,
+                      borderRadius: isMobile ? '16px' : '24px',
+                      // ✅ Mobile: padding lebih compact
+                      padding: isMobile ? `18px 14px ${pad}px` : `28px 24px ${pad}px`,
                       position: 'relative',
                       overflow: 'hidden',
                       cursor: 'none',
                       display: 'flex',
                       flexDirection: 'column',
-                      gap: '16px',
+                      gap: isMobile ? '10px' : '16px',
                       border: '2px solid transparent',
                       transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s ease, border-color 0.3s ease, opacity 0.6s ease',
                       transform: !isVisible ? 'translateY(40px)' : hoveredId === project.id ? 'translateY(-8px) scale(1.02)' : 'translateY(0) scale(1)',
@@ -309,32 +306,55 @@ const Work: React.FC = () => {
                       transitionDelay: isVisible ? '0ms' : `${globalIdx * 60}ms`,
                     }}
                   >
-                    <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(135deg, ${project.accentColor}10, transparent 60%)`, opacity: hoveredId === project.id ? 1 : 0, transition: 'opacity 0.4s ease', borderRadius: '24px', pointerEvents: 'none' }} />
-                    <div style={{ position: 'absolute', top: 0, left: '24px', right: '24px', height: '3px', background: `linear-gradient(90deg, ${project.accentColor}, transparent)`, borderRadius: '0 0 4px 4px', opacity: hoveredId === project.id ? 1 : 0, transition: 'opacity 0.3s ease' }} />
-                    <div style={{ position: 'absolute', top: '16px', right: '16px', background: project.accentColor, color: 'white', fontFamily: 'var(--font-mono)', fontSize: '9px', fontWeight: 700, padding: '4px 10px', borderRadius: '50px', letterSpacing: '0.08em', opacity: hoveredId === project.id ? 1 : 0, transform: hoveredId === project.id ? 'translateY(0) scale(1)' : 'translateY(-6px) scale(0.9)', transition: 'all 0.25s cubic-bezier(0.16,1,0.3,1)' }}>VIEW ↗</div>
+                    <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(135deg, ${project.accentColor}10, transparent 60%)`, opacity: hoveredId === project.id ? 1 : 0, transition: 'opacity 0.4s ease', borderRadius: isMobile ? '16px' : '24px', pointerEvents: 'none' }} />
+                    <div style={{ position: 'absolute', top: 0, left: isMobile ? '14px' : '24px', right: isMobile ? '14px' : '24px', height: '3px', background: `linear-gradient(90deg, ${project.accentColor}, transparent)`, borderRadius: '0 0 4px 4px', opacity: hoveredId === project.id ? 1 : 0, transition: 'opacity 0.3s ease' }} />
+
+                    {/* ✅ "VIEW ↗" badge — sembunyikan di mobile karena sempit */}
+                    {!isMobile && (
+                      <div style={{ position: 'absolute', top: '16px', right: '16px', background: project.accentColor, color: 'white', fontFamily: 'var(--font-mono)', fontSize: '9px', fontWeight: 700, padding: '4px 10px', borderRadius: '50px', letterSpacing: '0.08em', opacity: hoveredId === project.id ? 1 : 0, transform: hoveredId === project.id ? 'translateY(0) scale(1)' : 'translateY(-6px) scale(0.9)', transition: 'all 0.25s cubic-bezier(0.16,1,0.3,1)' }}>VIEW ↗</div>
+                    )}
 
                     <div style={{ position: 'relative' }}>
-                      <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '12px', letterSpacing: '0.12em', color: project.accentColor, marginBottom: '16px', opacity: 0.85 }}>
+                      <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: isMobile ? '10px' : '12px', letterSpacing: '0.12em', color: project.accentColor, marginBottom: isMobile ? '10px' : '16px', opacity: 0.85 }}>
                         {String(project.id).padStart(2, '0')}
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                        <span style={{ display: 'inline-block', width: '6px', height: '6px', background: project.accentColor, borderRadius: '50%', flexShrink: 0 }} />
-                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em', color: 'var(--gray)', textTransform: 'uppercase' }}>
-                          {project.category} · {project.year}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                        <span style={{ display: 'inline-block', width: '5px', height: '5px', background: project.accentColor, borderRadius: '50%', flexShrink: 0 }} />
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: isMobile ? '8px' : '10px', fontWeight: 700, letterSpacing: '0.1em', color: 'var(--gray)', textTransform: 'uppercase' }}>
+                          {/* ✅ Mobile: tampilkan year saja biar singkat, category di bawah */}
+                          {isMobile ? project.year : `${project.category} · ${project.year}`}
                         </span>
                       </div>
-                      <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: isMobile ? '20px' : '22px', letterSpacing: '-0.02em', color: 'var(--black)', lineHeight: 1.2 }}>
+                      <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: isMobile ? '14px' : '22px', letterSpacing: '-0.02em', color: 'var(--black)', lineHeight: 1.2 }}>
                         {project.title}
                       </h3>
+                      {/* ✅ Mobile: category sebagai badge kecil di bawah judul */}
+                      {isMobile && (
+                        <span style={{ display: 'inline-block', marginTop: '6px', background: project.accentColor + '20', color: project.accentColor, fontFamily: 'var(--font-mono)', fontSize: '8px', fontWeight: 700, padding: '3px 8px', borderRadius: '50px', letterSpacing: '0.05em' }}>
+                          {project.category}
+                        </span>
+                      )}
                     </div>
 
-                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
-                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                        {project.tags.map(tag => (
-                          <span key={tag} style={{ background: 'rgba(0,0,0,0.07)', color: 'var(--black)', fontFamily: 'var(--font-mono)', fontSize: '10px', fontWeight: 700, padding: '4px 10px', borderRadius: '50px', letterSpacing: '0.04em' }}>{tag}</span>
-                        ))}
-                      </div>
-                      <div style={{ width: '34px', height: '34px', background: hoveredId === project.id ? project.accentColor : 'rgba(0,0,0,0.08)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: hoveredId === project.id ? 'white' : 'var(--black)', fontSize: '15px', flexShrink: 0, transition: 'all 0.35s cubic-bezier(0.16,1,0.3,1)', transform: hoveredId === project.id ? 'rotate(45deg) scale(1.1)' : 'rotate(0) scale(1)' }}>↗</div>
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
+                      {/* ✅ Mobile: hanya tampilkan 1 tag pertama + arrow icon */}
+                      {isMobile ? (
+                        <>
+                          <span style={{ background: 'rgba(0,0,0,0.07)', color: 'var(--black)', fontFamily: 'var(--font-mono)', fontSize: '8px', fontWeight: 700, padding: '3px 8px', borderRadius: '50px', letterSpacing: '0.04em' }}>
+                            {project.tags[0]}
+                          </span>
+                          <div style={{ width: '26px', height: '26px', background: hoveredId === project.id ? project.accentColor : 'rgba(0,0,0,0.08)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: hoveredId === project.id ? 'white' : 'var(--black)', fontSize: '12px', flexShrink: 0, transition: 'all 0.35s cubic-bezier(0.16,1,0.3,1)', transform: hoveredId === project.id ? 'rotate(45deg) scale(1.1)' : 'rotate(0) scale(1)' }}>↗</div>
+                        </>
+                      ) : (
+                        <>
+                          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                            {project.tags.map(tag => (
+                              <span key={tag} style={{ background: 'rgba(0,0,0,0.07)', color: 'var(--black)', fontFamily: 'var(--font-mono)', fontSize: '10px', fontWeight: 700, padding: '4px 10px', borderRadius: '50px', letterSpacing: '0.04em' }}>{tag}</span>
+                            ))}
+                          </div>
+                          <div style={{ width: '34px', height: '34px', background: hoveredId === project.id ? project.accentColor : 'rgba(0,0,0,0.08)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: hoveredId === project.id ? 'white' : 'var(--black)', fontSize: '15px', flexShrink: 0, transition: 'all 0.35s cubic-bezier(0.16,1,0.3,1)', transform: hoveredId === project.id ? 'rotate(45deg) scale(1.1)' : 'rotate(0) scale(1)' }}>↗</div>
+                        </>
+                      )}
                     </div>
                   </div>
                 )
